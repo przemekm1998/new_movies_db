@@ -83,7 +83,7 @@ class DataDownloader:
                       'imdbRating': imdb_rating, 'imdbVotes': imdb_votes,
                       'BoxOffice': box_office}
         except KeyError:
-            print('Check your titles in the ')
+            pass
 
         return result
 

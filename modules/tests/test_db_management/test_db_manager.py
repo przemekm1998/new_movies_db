@@ -54,3 +54,4 @@ def test_incorrect_statement(database):
 
     with pytest.raises(sqlite3.OperationalError):
         database.execute_statement(statement)
+
