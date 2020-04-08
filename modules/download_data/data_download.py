@@ -92,7 +92,7 @@ class DataDownloader:
         :return: number converted to integer or None if no digit found
         """
         try:
-            converted = int(''.join([i for i in number_to_convert if i.isdigit()]))
+            converted = int(''.join(i for i in number_to_convert if i.isdigit()))
             return converted
         except ValueError:
             return None
