@@ -70,6 +70,16 @@ def correct_titles():
     del titles
 
 
+@pytest.fixture(scope='module')
+def incorrect_titles():
+    """ Setup of list of correct titles to download their data """
+
+    titles = ('Nie ma takiego:)', 'In Bruges', '~tego tez~')
+    yield titles
+
+    del titles
+
+
 def test_env_variable_set(data_downloader):
     """ Testing env variable read if set """
 
@@ -153,3 +163,12 @@ def test_download_data_only_correct_titles(data_downloader, correct_titles):
     assert results[0]['Title'] == 'Gods'
     assert results[1]['Title'] == 'Memento'
     assert results[2]['Title'] == 'In Bruges'
+
+
+def test_download_data_with_incorrect_titles(data_downloader, incorrect_titles):
+    """ Testing downloading data for with incorrect list of titles """
+
+    results = tuple(data_downloader.download_data(incorrect_titles))
+
+    assert len(results) == 1
+    assert results[0]['Title'] == 'In Bruges'
