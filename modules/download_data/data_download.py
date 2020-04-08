@@ -1,6 +1,8 @@
+""" Downloading data from OMDB API and parsing it into proper dict """
+
+import concurrent.futures
 import os
 import requests
-import concurrent.futures
 
 
 class DataDownloader:
@@ -18,8 +20,8 @@ class DataDownloader:
 
         if api_key is None:
             raise ValueError('OMDB API KEY not set as env variable!')
-        else:
-            return api_key
+
+        return api_key
 
     def download_data(self, list_of_titles):
         """
