@@ -54,6 +54,9 @@ class DataDownloader:
         response = requests.get(f'http://www.omdbapi.com/?apikey={self.api_key}',
                                 params=payload).json()
 
+        if response['Response'] == 'False':
+            print(f"Couldn't download data for title: {title}")  # Info for the user
+
         return response
 
     def parse_json_response(self, response):
@@ -80,7 +83,7 @@ class DataDownloader:
                       'imdbRating': imdb_rating, 'imdbVotes': imdb_votes,
                       'BoxOffice': box_office}
         except KeyError:
-            print(f'Cannnot parse response: {response}')
+            print('Check your titles in the ')
 
         return result
 
