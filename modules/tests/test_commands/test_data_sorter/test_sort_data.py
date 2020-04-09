@@ -11,8 +11,9 @@ def database():
     database = DbManager(db_name=":memory:")
 
     database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating) VALUES (
-    'Gods', 2012, 6.8);""")
+        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
+box_office) VALUES (
+    'Gods', 2012, 6.8, 7854);""")
     database.execute_statement(
         f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating) VALUES (
     'Memento', 2014, 7.7);""")
@@ -76,3 +77,17 @@ def test_handle_sort_by_imdb_rating(data_sorter):
     second_result = next(results)
     assert second_result['title'] == 'Gods'
     assert second_result['imdb_rating'] == 6.8
+
+
+def test_handle_sort_by_box_office(data_sorter):
+    """ Verify if results from data sorter are correct """
+
+    results = data_sorter.handle(*['box_office'])
+
+    result = next(results)
+    assert result['title'] == 'Gods'
+    assert result['box_office'] == 7854
+
+    second_result = next(results)
+    assert second_result['title'] == 'Memento'
+    assert second_result['box_office'] is None
