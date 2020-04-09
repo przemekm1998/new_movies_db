@@ -43,6 +43,7 @@ class DbManager:
         Executing the given SQL statement
         :param statement: SQL statement to execute within the db
         :raises IntegrityError: i.e. insert statement violating UNIQUE constraint
+        :raises OperationalError: trying to execute invalid statement
         """
 
         try:

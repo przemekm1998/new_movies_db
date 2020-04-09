@@ -42,7 +42,7 @@ class DataUpdater(CommandsHandler):
 
         return statement
 
-    def handle(self):
+    def handle(self, *args):
         """ Handling updating the database data """
 
         # Get titles with empty data

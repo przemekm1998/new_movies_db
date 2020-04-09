@@ -9,7 +9,7 @@ class CommandsHandler:
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def handle(self):
+    def handle(self, *args):
         """ The main handle method used in main for every command handler """
 
         raise NotImplementedError
