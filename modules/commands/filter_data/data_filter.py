@@ -5,13 +5,14 @@ from modules.commands.filter_data.filters.filter_by_cast import FilterByCast
 from modules.commands.filter_data.filters.filter_by_director import FilterByDirector
 from modules.commands.filter_data.filters.filter_by_earnings import FilterByEarnings
 from modules.commands.filter_data.filters.filter_by_language import FilterByLanguage
+from modules.db_management.db_manager import DbManager
 
 
 class DataFilter(CommandsHandler):
     """ This class contains every method needed for filtering data """
 
-    def __init__(self, database):
-        self.database = database  # Db instance for class to work with
+    def __init__(self):
+        self.database = DbManager()  # Db instance for class to work with
         self.column = None  # Column to filter
 
         # Available filters to use

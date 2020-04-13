@@ -71,6 +71,8 @@ class GenericNumbersFilter(GenericFilter):
             return db_result >= self.value_to_filter
         except TypeError:
             return False
+        except IndexError:
+            return False
 
     def gt(self, database_result):
         """
@@ -83,6 +85,8 @@ class GenericNumbersFilter(GenericFilter):
             db_result = self.database_result_parse(database_result)
             return db_result > self.value_to_filter
         except TypeError:
+            return False
+        except IndexError:
             return False
 
     def lte(self, database_result):
@@ -97,6 +101,8 @@ class GenericNumbersFilter(GenericFilter):
             return db_result <= self.value_to_filter
         except TypeError:
             return False
+        except IndexError:
+            return False
 
     def lt(self, database_result):
         """
@@ -110,6 +116,8 @@ class GenericNumbersFilter(GenericFilter):
             return db_result < self.value_to_filter
         except TypeError:
             return False
+        except IndexError:
+            return False
 
     def e(self, database_result):
         """
@@ -122,6 +130,8 @@ class GenericNumbersFilter(GenericFilter):
             db_result = self.database_result_parse(database_result)
             return db_result == self.value_to_filter
         except TypeError:
+            return False
+        except IndexError:
             return False
 
     @abstractmethod

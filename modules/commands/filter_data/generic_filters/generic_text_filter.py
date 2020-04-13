@@ -1,4 +1,5 @@
 """ Filtering text column based on value to be filtered out """
+import re
 from abc import abstractmethod
 
 from modules.commands.filter_data.generic_filters.generic_filter import GenericFilter
@@ -29,7 +30,9 @@ class GenericTextFilter(GenericFilter):
         :return: Boolean if given result contains value to be filtered ou
         """
 
-        return self.value_to_filter in database_result[self.column_name]
+        found = bool(re.search(rf'{self.value_to_filter}', database_result[
+            self.column_name]))
+        return found
 
     @abstractmethod
     def get_column_name(self):

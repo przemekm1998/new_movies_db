@@ -3,6 +3,8 @@
 import concurrent.futures
 import os
 import requests
+import datetime
+import time
 
 
 class DataDownloader:
@@ -31,7 +33,7 @@ class DataDownloader:
         """
 
         # Download the data using API
-        with concurrent.futures.ThreadPoolExecutor() as executor:
+        with concurrent.futures.ProcessPoolExecutor() as executor:
             downloaded_data = executor.map(self.download_title, list_of_titles)
 
         # Parse downloaded data
@@ -56,6 +58,10 @@ class DataDownloader:
 
         if response['Response'] == 'False':
             print(f"Couldn't download data for title: {title}")  # Info for the user
+        else:
+            ts = time.time()
+            st = datetime.datetime.fromtimestamp(ts).strftime('%H:%M:%S')
+            print(f"[{st}] Data downloaded for: {title}")
 
         return response
 

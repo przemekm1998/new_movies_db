@@ -3,14 +3,15 @@
 import sqlite3
 
 from modules.commands.commands_handler import CommandsHandler
+from modules.db_management.db_manager import DbManager
 from modules.download_data.data_download import DataDownloader
 
 
 class DataUpdater(CommandsHandler):
     """ Handling updating the database data """
 
-    def __init__(self, database):
-        self.database = database
+    def __init__(self):
+        self.database = DbManager()
 
     @property
     def select_titles_with_no_data(self):
@@ -70,7 +71,6 @@ class DataUpdater(CommandsHandler):
         :param downloaded_data: downloaded data using API
         :return:
         """
-
         try:
             with self.database.connection:
                 self.database.cursor.execute(self.insert_data_statement,
@@ -89,6 +89,7 @@ class DataUpdater(CommandsHandler):
                                               'imdbVotes': downloaded_data['imdbVotes'],
                                               'BoxOffice': downloaded_data['BoxOffice']
                                               })
+                print(f"{downloaded_data['Title']} added to the database")
         except sqlite3.IntegrityError as error:
             raise error
         except sqlite3.OperationalError as error:

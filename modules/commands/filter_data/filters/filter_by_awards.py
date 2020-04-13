@@ -27,7 +27,7 @@ class OscarsNominated(GenericTextFilter):
         So the keyword here is /Nominated/
         """
 
-        self.value_to_filter = 'Nominated'
+        self.value_to_filter = 'Nominated.*Oscar'  # regex expression to search
 
         return self.filter_text
 

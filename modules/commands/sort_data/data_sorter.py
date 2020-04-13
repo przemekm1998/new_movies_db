@@ -1,13 +1,15 @@
 """ Fetching sorted data from the database """
 from modules.commands.commands_handler import CommandsHandler
+from modules.db_management.db_manager import DbManager
 
 
 class DataSorter(CommandsHandler):
     """ This class contains every method needed for sorting data """
 
-    def __init__(self, database):
-        self.database = database  # Db instance for class to work with
+    def __init__(self):
+        self.database = DbManager()  # Db instance for class to work with
         self.column = None  # Column to sort by
+        self.sort_order = None
 
     @property
     def sort_by_sql_statement(self):
