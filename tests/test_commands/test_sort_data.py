@@ -1,7 +1,7 @@
 import pytest
 
-from modules.commands.sort_data.data_sorter import DataSorter
-from modules.db_management.db_manager import DbManager
+from modules.commands.data_sorter import DataSorter
+from modules.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')

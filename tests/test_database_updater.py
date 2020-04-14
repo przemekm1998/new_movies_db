@@ -1,7 +1,7 @@
 import pytest
 
-from modules.commands.update_data.data_updater import DataUpdater
-from modules.db_management.db_manager import DbManager
+from modules.database_updater import DatabaseUpdater
+from modules.db_manager import DbManager
 
 
 @pytest.fixture(scope='function')
@@ -28,7 +28,7 @@ def select_statement(database):
 def data_updater(database):
     """ Setup of data updater class """
 
-    data_updater = DataUpdater(database)
+    data_updater = DatabaseUpdater(database)
     yield data_updater
 
     del data_updater
@@ -92,8 +92,8 @@ def test_insert_title_data(data_updater, data_to_insert, database, select_statem
     assert result['Box_Office'] == data_to_insert['BoxOffice']
 
 
-def test_handle(data_updater, database, select_statement):
-    """ Testing if the handle method works properly """
+def test_update(data_updater, database, select_statement):
+    """ Testing if the update method works properly """
 
     # Add some dummy empty titles
     data_updater.database.execute_statement(
@@ -101,7 +101,7 @@ def test_handle(data_updater, database, select_statement):
     data_updater.database.execute_statement(
         f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Gods');""")
 
-    data_updater.handle()
+    data_updater.update()
 
     results = data_updater.database.execute_statement(select_statement)
 

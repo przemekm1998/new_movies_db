@@ -16,7 +16,7 @@ def earnings_filter():
 def test_column_name(earnings_filter):
     """ Test if column name is correct """
 
-    assert earnings_filter.get_column_name() == 'box_office'
+    assert earnings_filter.column_name == 'box_office'
 
 
 @pytest.fixture(scope='module')

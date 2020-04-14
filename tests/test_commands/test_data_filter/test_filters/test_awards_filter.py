@@ -49,7 +49,7 @@ def database_record():
 def test_awards_filter_column_name(awards_filter):
     """ Verify column name returned by awards class """
 
-    assert awards_filter.get_column_name() == 'awards'
+    assert awards_filter.column_name == 'awards'
 
 
 @pytest.mark.parametrize('args, result',
@@ -77,7 +77,7 @@ def test_awards_get_filter_function_incorrect_keyword(awards_filter):
 def test_oscars_filter_column_name(oscars_filter):
     """ Test if column name is correct """
 
-    assert oscars_filter.get_column_name() == 'awards'
+    assert oscars_filter.column_name == 'awards'
 
 
 def test_oscars_filter_keyword(oscars_filter):
@@ -102,7 +102,7 @@ def test_filter_by_oscars(oscars_filter, db_data, result):
 def test_awards_won_filter_column_name(win_percentage_filter):
     """ Test if column name is correct """
 
-    assert win_percentage_filter.get_column_name() == 'awards'
+    assert win_percentage_filter.column_name == 'awards'
 
 
 def test_awards_won_filter_keyword(win_percentage_filter):

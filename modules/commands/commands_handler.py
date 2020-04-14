@@ -1,12 +1,16 @@
 """ Handling commands implementation template """
 
 from abc import ABCMeta, abstractmethod
+from modules.db_manager import DbManager
 
 
 class CommandsHandler:
     """ Commands Handler interface for every handler """
 
     __metaclass__ = ABCMeta
+
+    def __init__(self, database):
+        self.database = database
 
     @abstractmethod
     def handle(self, *args):

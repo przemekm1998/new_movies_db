@@ -1,9 +1,8 @@
-from modules.commands.filter_data.generic_filters.generic_text_filter import \
+from modules.commands.filter_data.filters.generic_filters import \
     GenericTextFilter
 
 
 class FilterByCast(GenericTextFilter):
     """ Class which handles filtering by cast """
 
-    def get_column_name(self):
-        return 'cast'
+    column_name = 'cast'

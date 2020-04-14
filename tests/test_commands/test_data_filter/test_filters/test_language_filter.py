@@ -26,7 +26,7 @@ def db_data():
 def test_column_name(language_filter):
     """ Test if column name is correct """
 
-    assert language_filter.get_column_name() == 'language'
+    assert language_filter.column_name == 'language'
 
 
 @pytest.mark.parametrize('args, result',

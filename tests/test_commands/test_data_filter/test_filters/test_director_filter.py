@@ -26,7 +26,7 @@ def db_data():
 def test_column_name(director_filter):
     """ Test if column name is correct """
 
-    assert director_filter.get_column_name() == 'director'
+    assert director_filter.column_name == 'director'
 
 
 @pytest.mark.parametrize('args, result',

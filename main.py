@@ -1,7 +1,7 @@
 from modules.cli_interface import CLI
 from modules.commands.filter_data.data_filter import DataFilter
-from modules.commands.sort_data.data_sorter import DataSorter
-from modules.commands.update_data.data_updater import DataUpdater
+from modules.commands.data_sorter import DataSorter
+from modules.database_updater import DatabaseUpdater
 from pprint import pprint
 
 
@@ -17,16 +17,15 @@ class Main:
         # Available handlers of commands
         handlers = (DataSorter(), DataFilter())
 
-        updater = DataUpdater()
-        print('\nCHECKING FOR DATABASE UPDATE\n')  # Info for user about db update
-        updater.handle()
+        updater = DatabaseUpdater()
+        updater.update()
 
         Main.handle_commands(commands, handlers)
 
     @staticmethod
     def handle_commands(commands, handlers):
         """
-        Handling commands requests
+        Handling every commands request within a loop
         :param commands: Commands requested by user
         :param handlers: List of available handling commands classes
         :return:
@@ -49,7 +48,7 @@ class Main:
         """
 
         for result in results:
-            print(result[0] + ' | ' + str(result[1]))
+            pprint(result[0] + ' | ' + str(result[1]))
 
 
 if __name__ == '__main__':

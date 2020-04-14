@@ -1,9 +1,8 @@
-from modules.commands.filter_data.generic_filters.generic_text_filter import \
+from modules.commands.filter_data.filters.generic_filters import \
     GenericTextFilter
 
 
 class FilterByLanguage(GenericTextFilter):
     """ Class which handles filtering by language """
 
-    def get_column_name(self):
-        return 'language'
+    column_name = 'language'

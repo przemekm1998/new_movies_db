@@ -1,5 +1,6 @@
 htmlcov/
 .coverage
+movies.sqlite
 .coveragerc
 pytest.ini
 # Byte-compiled / optimized / DLL files

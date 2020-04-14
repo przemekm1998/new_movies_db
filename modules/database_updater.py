@@ -2,16 +2,15 @@
 
 import sqlite3
 
-from modules.commands.commands_handler import CommandsHandler
-from modules.db_management.db_manager import DbManager
-from modules.download_data.data_download import DataDownloader
+from modules.db_manager import DbManager
+from modules.data_download import DataDownloader
 
 
-class DataUpdater(CommandsHandler):
+class DatabaseUpdater:
     """ Handling updating the database data """
 
-    def __init__(self):
-        self.database = DbManager()
+    def __init__(self, database=DbManager()):
+        self.database = database
 
     @property
     def select_titles_with_no_data(self):
@@ -43,8 +42,10 @@ class DataUpdater(CommandsHandler):
 
         return statement
 
-    def handle(self, *args):
+    def update(self):
         """ Handling updating the database data """
+
+        print('\nCHECKING FOR DATABASE UPDATE\n')  # Info for the user
 
         # Get titles with empty data
         empty_titles = self.get_empty_titles()
@@ -96,6 +97,3 @@ class DataUpdater(CommandsHandler):
             raise error
         except KeyError:
             raise KeyError(f'Data in incorrect format! {downloaded_data}')
-
-    def get_keyword(self):
-        return 'update'

@@ -1,6 +1,6 @@
 import pytest
 
-from modules.commands.utils.common_utils import ExtractNumber
+from modules.commands.common_utils import ExtractNumber
 
 
 @pytest.fixture(scope='module')

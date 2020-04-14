@@ -26,7 +26,7 @@ def db_data():
 def test_column_name(actor_filter):
     """ Test if column name is correct """
 
-    assert actor_filter.get_column_name() == 'cast'
+    assert actor_filter.column_name == 'cast'
 
 
 @pytest.mark.parametrize('args, result',

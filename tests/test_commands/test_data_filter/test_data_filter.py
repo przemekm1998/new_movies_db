@@ -1,7 +1,7 @@
 import pytest
 
 from modules.commands.filter_data.data_filter import DataFilter
-from modules.db_management.db_manager import DbManager
+from modules.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')
@@ -30,7 +30,7 @@ def database():
 def data_filter(database):
     """ Setup of data sorter class """
 
-    data_filter = DataFilter(database)
+    data_filter = DataFilter(database=database)
     yield data_filter
 
     del data_filter

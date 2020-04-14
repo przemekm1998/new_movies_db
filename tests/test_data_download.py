@@ -3,7 +3,7 @@ import os
 import pytest
 import requests
 
-from modules.download_data.data_download import DataDownloader
+from modules.data_download import DataDownloader
 
 
 @pytest.fixture(scope='module')
