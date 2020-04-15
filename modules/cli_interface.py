@@ -27,6 +27,11 @@ class CLI:
                             nargs='+', type=str,
                             metavar=('column', 'value'))
 
+        # Comparing records
+        # parser.add_argument('--compare_by', help='compare records', action='store',
+        #                     nargs='+', type=str,
+        #                     metavar=('compare_type', 'value'))
+
         args = parser.parse_args()
 
         commands = {'sort_by': args.sort_by,
