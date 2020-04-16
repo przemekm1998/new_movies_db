@@ -1,7 +1,7 @@
 import pytest
 
-from modules.commands.data_compare import DataCompare, GenericComparator
-from modules.db_manager import DbManager
+from modules.commands.data_compare import DataCompare
+from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')

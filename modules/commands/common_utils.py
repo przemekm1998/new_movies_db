@@ -25,3 +25,27 @@ class ExtractNumber:
             return num
         except IndexError:
             raise IndexError(f'No number connected with {word_connected_with_number}')
+
+    @staticmethod
+    def parse(db_result, column_name, word_to_parse):
+        """
+        Extracting a number from a single database record
+        :param word_to_parse:
+        :param column_name:
+        :param db_result: single result from SQL database
+        :return:
+        """
+
+        try:
+            parsed_data = ExtractNumber.extract(db_result[column_name],
+                                                word_to_parse)
+        except IndexError as error:
+            print(f'{error}, DB_DATA: {db_result[column_name]}')
+            parsed_data = None
+        except TypeError as error:
+            print(f'{error}, DB_DATA: {db_result[column_name]}')
+            parsed_data = None
+
+        results = {'title': db_result['title'], column_name: parsed_data}
+
+        return results

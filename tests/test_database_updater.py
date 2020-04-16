@@ -1,7 +1,7 @@
 import pytest
 
-from modules.database_updater import DatabaseUpdater
-from modules.db_manager import DbManager
+from modules.database.db_updater import DatabaseUpdater
+from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='function')
@@ -10,6 +10,12 @@ def database():
 
     database = DbManager(db_name=":memory:")
 
+    # Add some dummy empty titles
+    database.execute_statement(
+        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Memento');""")
+    database.execute_statement(
+        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Gods');""")
+
     yield database
 
     del database
@@ -17,7 +23,7 @@ def database():
 
 @pytest.fixture(scope='function')
 def select_statement(database):
-    """ Setup of select sql statmenet """
+    """ Setup of select sql statemenet """
 
     statement = f"""SELECT * FROM {database.db_table_name}"""
 
@@ -51,55 +57,41 @@ def data_to_insert():
     del data
 
 
-def test_select_titles_with_no_data(database, data_updater):
+def test_select_titles_with_no_data(data_updater):
     """ Testing retrieving titles with empty data from the db """
 
-    # Add some dummy empty titles
-    data_updater.database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Memento');""")
-    data_updater.database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Gods');""")
-
-    results = data_updater.get_empty_titles()
+    results = data_updater.get_titles_with_no_data()
 
     assert 'Memento' and 'Gods' in results
 
 
-def test_insert_title_data(data_updater, data_to_insert, database, select_statement):
-    """ Test inserting the downloaded data """
-
-    data_updater.database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Gods');""")
-
-    data_updater.insert_data(data_to_insert)
-
-    results = data_updater.database.execute_statement(select_statement)
-
-    result = next(results)
-
-    assert result['Title'] == data_to_insert['Title']
-    assert result['Year'] == data_to_insert['Year']
-    assert result['Runtime'] == data_to_insert['Runtime']
-    assert result['Genre'] == data_to_insert['Genre']
-    assert result['Director'] == data_to_insert['Director']
-    assert result['Cast'] == data_to_insert['Cast']
-    assert result['Writer'] == data_to_insert['Writer']
-    assert result['Language'] == data_to_insert['Language']
-    assert result['Country'] == data_to_insert['Country']
-    assert result['Awards'] == data_to_insert['Awards']
-    assert result['imdb_Rating'] == data_to_insert['imdbRating']
-    assert result['imdb_Votes'] == data_to_insert['imdbVotes']
-    assert result['Box_Office'] == data_to_insert['BoxOffice']
-
-
-def test_update(data_updater, database, select_statement):
+# def test_insert_title_data(data_updater, data_to_insert, database, select_statement):
+#     """ Test inserting the downloaded data """
+#
+#
+#     data_updater.insert_data(data_to_insert)
+#
+#     results = data_updater.database.execute_statement(select_statement)
+#
+#     result = next(results)
+#
+#     assert result['Title'] == data_to_insert['Title']
+#     assert result['Year'] == data_to_insert['Year']
+#     assert result['Runtime'] == data_to_insert['Runtime']
+#     assert result['Genre'] == data_to_insert['Genre']
+#     assert result['Director'] == data_to_insert['Director']
+#     assert result['Cast'] == data_to_insert['Cast']
+#     assert result['Writer'] == data_to_insert['Writer']
+#     assert result['Language'] == data_to_insert['Language']
+#     assert result['Country'] == data_to_insert['Country']
+#     assert result['Awards'] == data_to_insert['Awards']
+#     assert result['imdb_Rating'] == data_to_insert['imdbRating']
+#     assert result['imdb_Votes'] == data_to_insert['imdbVotes']
+#     assert result['Box_Office'] == data_to_insert['BoxOffice']
+#
+#
+def test_update(data_updater, select_statement):
     """ Testing if the update method works properly """
-
-    # Add some dummy empty titles
-    data_updater.database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Memento');""")
-    data_updater.database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE) VALUES ('Gods');""")
 
     data_updater.update()
 

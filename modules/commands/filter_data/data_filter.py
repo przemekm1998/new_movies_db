@@ -1,14 +1,14 @@
 """ Fetching filtered data from the database """
-from modules.commands.commands_handler import CommandsHandler
+from modules.commands.commands_handler import CommandHandler
 from modules.commands.filter_data.filters.filter_by_awards import FilterByAwards
 from modules.commands.filter_data.filters.filter_by_cast import FilterByCast
 from modules.commands.filter_data.filters.filter_by_director import FilterByDirector
 from modules.commands.filter_data.filters.filter_by_earnings import FilterByEarnings
 from modules.commands.filter_data.filters.filter_by_language import FilterByLanguage
-from modules.db_manager import DbManager
+from modules.database.db_manager import DbManager
 
 
-class DataFilter(CommandsHandler):
+class DataFilter(CommandHandler):
     """ This class contains every method needed for filtering data """
 
     def __init__(self, database=DbManager()):

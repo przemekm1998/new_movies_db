@@ -1,39 +1,45 @@
 """ Fetching sorted data from the database """
-from modules.commands.commands_handler import CommandsHandler
-from modules.db_manager import DbManager
+from modules.commands.commands_handler import CommandHandler
+from modules.commands.templates.sorter_templates import GenericSorter, ParsingSorter
+from modules.database.db_interfaces import DbReader
 
 
-class DataSorter(CommandsHandler):
+class DataSorter(DbReader, CommandHandler):
     """ This class contains every method needed for sorting data """
 
-    def __init__(self, database=DbManager()):
-        super().__init__(database)
-        self.column = None  # Column to sort by
-        self.sort_order = None
+    keyword = 'sort_by'
 
-    @property
-    def sort_by_sql_statement(self):
-        """ Select sorted data based on given column """
-
-        statement = f"""SELECT {self.database.db_table_name}.title, 
-                    {self.database.db_table_name}.{self.column} 
-                    FROM {self.database.db_table_name}
-                    ORDER BY {self.column} DESC;"""
-
-        return statement
+    sorters = (GenericSorter(keyword='title', column_name='title'),
+               GenericSorter(keyword='year', column_name='year'),
+               GenericSorter(keyword='genre', column_name='genre'),
+               GenericSorter(keyword='cast', column_name='cast'),
+               GenericSorter(keyword='writer', column_name='writer'),
+               GenericSorter(keyword='director', column_name='director'),
+               GenericSorter(keyword='awards', column_name='awards'),
+               GenericSorter(keyword='imdb_rating', column_name='imdb_rating'),
+               GenericSorter(keyword='imdb_votes', column_name='imdb_votes'),
+               GenericSorter(keyword='box_office', column_name='box_office'),
+               ParsingSorter(keyword='runtime', column_name='runtime',
+                             word_to_parse='min'),
+               )
 
     def handle(self, *args):
         """
         Handling the sorting command request
-        :param args: Column names to sort by
+        :param args: ['requested_sorter', 'sorting_order']
         :return: Generator of sorted values from database
         """
 
-        self.column = args[0]  # Setting the column to sort by
+        requested_sorter = args[0]
 
-        results = self.database.execute_statement(self.sort_by_sql_statement)
+        for sorter in self.sorters:
+            if requested_sorter == sorter.keyword:
+                db_data = self.select_data_from_db(sorter.column_name)
+                filtered_data = filter(lambda x: x[sorter.column_name], db_data)
 
-        return results
+                sort_order = args[1]
+                sorted_data = sorter.sort_data(filtered_data, sort_order)
 
-    def get_keyword(self):
-        return 'sort_by'
+                return sorted_data
+        raise ValueError(f"Given sort option doesn't exist: {requested_sorter}")
+

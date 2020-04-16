@@ -1,7 +1,7 @@
 import pytest
 
 from modules.commands.filter_data.data_filter import DataFilter
-from modules.db_manager import DbManager
+from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')

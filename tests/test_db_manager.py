@@ -1,7 +1,7 @@
 import pytest
 import sqlite3
 
-from modules.db_manager import DbManager
+from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='function')

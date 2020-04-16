@@ -6,7 +6,6 @@ class DbManager:
     """ Managing the db """
 
     def __init__(self, db_name='movies.sqlite'):
-        self.db_name = db_name
         self.db_table_name = 'MOVIES'
 
         self.connection = sqlite3.connect(db_name)
@@ -40,7 +39,7 @@ class DbManager:
 
     def execute_statement(self, statement):
         """
-        Executing the given SQL statement
+        Executing the given SQL select statement
         :param statement: SQL statement to execute within the db
         :raises IntegrityError: i.e. insert statement violating UNIQUE constraint
         :raises OperationalError: trying to execute invalid statement

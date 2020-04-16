@@ -1,12 +1,12 @@
 """ Comparing data by given parameter """
 
-from modules.commands.commands_handler import CommandsHandler
+from modules.commands.commands_handler import CommandHandler
 from modules.commands.comparators.generic_comparator import GenericComparator
 from modules.commands.comparators.parsing_comparator import ParsingComparator
-from modules.db_manager import DbManager
+from modules.database.db_manager import DbManager
 
 
-class DataHighscores(CommandsHandler):
+class DataHighscores(CommandHandler):
     """ Class containing methods needed to calculate highscores """
 
     available_comparators = (GenericComparator(keyword='box_office',
