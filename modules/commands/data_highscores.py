@@ -49,10 +49,26 @@ class DataHighscores(CommandsHandler):
             db_data = self.database.execute_statement(self.select_sql_statement)
 
             # Select highest result from filtered data
-            result = comparator.compare_data(db_data)
-            results.append(result)
+            comparator_result = comparator.compare_data(db_data)
+
+            formatted_result = self.format_results(comparator, comparator_result)
+            results.append(formatted_result)
 
         return results
+
+    @staticmethod
+    def format_results(comparator, comparator_result):
+        """
+        Formatting the full results into dict
+        :param comparator: Used comparator
+        :param comparator_result: Result returned by comparator
+        :return: Formatted dict
+        """
+
+        final_result = {'category': comparator.keyword}
+        final_result.update(comparator_result)
+
+        return final_result
 
     def get_keyword(self):
         return 'highscores'

@@ -68,15 +68,19 @@ def test_handle(data_highscores):
     box_office_result = results[0]
     assert box_office_result['title'] == 'Memento'
     assert box_office_result['box_office'] == 1000
+    assert box_office_result['category'] == 'box_office'
 
-    box_office_result = results[1]
-    assert box_office_result['title'] == 'Batman'
-    assert box_office_result['imdb_rating'] == 8.6
+    imdb_rating_result = results[1]
+    assert imdb_rating_result['title'] == 'Batman'
+    assert imdb_rating_result['imdb_rating'] == 8.6
+    assert imdb_rating_result['category'] == 'imdb_rating'
 
-    box_office_result = results[2]
-    assert box_office_result['title'] == 'Memento'
-    assert box_office_result['runtime'] == 220
+    runtime_result = results[2]
+    assert runtime_result['title'] == 'Memento'
+    assert runtime_result['runtime'] == 220
+    assert runtime_result['category'] == 'runtime'
 
-    box_office_result = results[3]
-    assert box_office_result['title'] == 'Supermen'
-    assert box_office_result['awards_won'] == 80
+    awards_won_result = results[3]
+    assert awards_won_result['title'] == 'Supermen'
+    assert awards_won_result['awards_won'] == 80
+    assert awards_won_result['category'] == 'awards_won'

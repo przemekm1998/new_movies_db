@@ -41,25 +41,37 @@ class DataCompare(CommandsHandler):
         :return:
         """
 
-        comparator_keyword = args[0]
+        requested_comparator = args[0]
 
         for comparator in self.available_comparators:
-            if comparator_keyword == comparator.keyword:
-                # Geting the data from the database
-                self.column = comparator.column_name
-                db_data = self.database.execute_statement(self.select_sql_statement)
+            if requested_comparator == comparator.keyword:
+                titles_to_compare = args[1:]  # Extract titles
+                highest_result = self.execute_comparison(comparator, *titles_to_compare)
 
-                # Filter db results with particular titles to compare
-                titles_to_compare = args[1:]  # Comparator keyword not needed anymore
-                filtered_db_data = filter(lambda x: x['Title'] in titles_to_compare,
-                                          db_data)
+                return highest_result
 
-                # Select max from filtered data
-                results = comparator.compare_data(filtered_db_data)
+        raise ValueError(f'Incorrect compare option given: {requested_comparator}')
 
-                return results
+    def execute_comparison(self, comparator, *titles_to_compare):
+        """
+        Execute single data comparison
+        :param comparator: Selected comparator
+        :param titles_to_compare: Titles given by user
+        :return:
+        """
 
-        raise ValueError(f'Incorrect compare option given: {comparator_keyword}')
+        # Geting the data from the database
+        self.column = comparator.column_name
+        db_data = self.database.execute_statement(self.select_sql_statement)
+
+        # Filter db results with particular titles to compare
+        filtered_db_data = filter(lambda x: x['Title'] in titles_to_compare,
+                                  db_data)
+
+        # Select max from filtered data
+        result = comparator.compare_data(filtered_db_data)
+
+        return result
 
     def get_keyword(self):
         return 'compare_by'
