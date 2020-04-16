@@ -22,4 +22,7 @@ class GenericComparator:
 
         result = max(not_none_results, key=lambda x: x[self.column_name])
 
-        return result
+        dict_result = {'title': result['title'],
+                       self.keyword: result[self.column_name]}
+
+        return dict_result

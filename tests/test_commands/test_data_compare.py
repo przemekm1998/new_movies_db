@@ -63,10 +63,11 @@ def test_get_keyword(data_comparator):
 def test_handle(data_comparator, args, result_title, result_value):
     """ Verify if executed comparison is correct """
 
+    keyword = args[0]
     result = data_comparator.handle(*args)
 
     assert result['title'] == result_title
-    assert result[data_comparator.column] == result_value
+    assert result[keyword] == result_value
 
 
 def test_handle_incorrect_keyword(data_comparator):

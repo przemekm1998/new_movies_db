@@ -38,20 +38,21 @@ def fake_database_results():
     del results
 
 
-@pytest.mark.parametrize('column, word_to_parse, result',
+@pytest.mark.parametrize('column, keyword, word_to_parse, result',
                          [
-                             ('runtime', 'min', 180),
-                             ('awards', 'wins', 50)
+                             ('runtime', 'runtime', 'min', 180),
+                             ('awards', 'awards_won', 'wins', 50)
                          ])
 def test_parsing_comparator_compare_data(fake_database_results, parsing_comparator,
-                                         column, result, word_to_parse):
+                                         column, result, word_to_parse, keyword):
     """ Test comparing by different columns """
 
     parsing_comparator.column_name = column
+    parsing_comparator.keyword = keyword
     parsing_comparator.word_to_parse = word_to_parse
     comparator_result = parsing_comparator.compare_data(fake_database_results)
 
-    assert comparator_result[column] == result
+    assert comparator_result[keyword] == result
 
 
 def test_parse_function_index_error(parsing_comparator):

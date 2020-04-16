@@ -38,16 +38,17 @@ def fake_database_results():
     del results
 
 
-@pytest.mark.parametrize('column, result',
+@pytest.mark.parametrize('column, keyword, result',
                          [
-                             ('imdb_rating', 9.3),
-                             ('box_office', 1000)
+                             ('imdb_rating', 'imdb_rating', 9.3),
+                             ('box_office', 'box_office', 1000)
                          ])
 def test_generic_comparator_compare_data(fake_database_results, generic_comparator,
-                                         column, result):
+                                         column, result, keyword):
     """ Test comparing by different columns """
 
     generic_comparator.column_name = column
+    generic_comparator.keyword = keyword
     comparator_result = generic_comparator.compare_data(fake_database_results)
 
-    assert comparator_result[column] == result
+    assert comparator_result[keyword] == result

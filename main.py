@@ -1,5 +1,4 @@
 from modules.cli_interface import CLI
-from modules.commands.data_compare import DataCompare
 from modules.commands.filter_data.data_filter import DataFilter
 from modules.commands.data_sorter import DataSorter
 from modules.database_updater import DatabaseUpdater
