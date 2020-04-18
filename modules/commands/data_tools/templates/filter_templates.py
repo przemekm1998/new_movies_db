@@ -1,20 +1,19 @@
 """ Generic filters to use """
 
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 import re
 
 
 class GenericFilter:
     """ FilterTemplate interface for every filter """
 
-    def __init__(self, keyword, column_name):
-        self.keyword = keyword
-        self.column_name = column_name
+    keyword = None
+    column_name = None
 
     @abstractmethod
     def get_filter_function(self, *args):
         """
-        Return filtering function
+        Implement specific filtering function
         :return: function that returns true if filtering conditions are met
         """
 
@@ -24,8 +23,7 @@ class GenericFilter:
 class GenericNumbersFilter(GenericFilter):
     """ Class containing all methods needed to filter numbers column """
 
-    def __init__(self, keyword, column_name):
-        super().__init__(keyword, column_name)
+    def __init__(self):
         self.operator = None
         self.value_to_filter = None
 
@@ -37,12 +35,12 @@ class GenericNumbersFilter(GenericFilter):
         :raises ValueError: User passed invalid number as argument
         """
 
-        self.operator = args[1]
+        self.operator = args[0]
 
         try:
-            self.value_to_filter = float(args[2])  # Convert str '10' argument to float
+            self.value_to_filter = float(args[1])  # Convert str '10' argument to float
         except ValueError:
-            raise ValueError(f'Value to filter must be a number: {args[2]}')
+            raise ValueError(f'Value to filter must be a number: {args[1]}')
 
         filter_function = self.select_function()
         return filter_function
@@ -156,9 +154,8 @@ class GenericNumbersFilter(GenericFilter):
 class GenericTextFilter(GenericFilter):
     """ Class containing all methods needed to filter text column """
 
-    def __init__(self, column_name, keyword):
+    def __init__(self):
         self.value_to_filter = None
-        super().__init__(column_name=column_name, keyword=keyword)
 
     def get_filter_function(self, *args):
         """
@@ -167,7 +164,7 @@ class GenericTextFilter(GenericFilter):
         :return:
         """
 
-        self.value_to_filter = args[1]  # args = ['column_name', 'value_to_filter']
+        self.value_to_filter = args[0]  # args = ['value_to_filter']
 
         return self.filter_text
 

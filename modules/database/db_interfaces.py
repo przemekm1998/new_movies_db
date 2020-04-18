@@ -1,17 +1,13 @@
+""" Classes to use when interacting with database """
+
 import sqlite3
 
-from modules.database.db_manager import DbManager
 
-
-class DbConnector:
-    """ Class managing database connection """
+class DbUpdater:
+    """ Class which allows database updating """
 
     def __init__(self, database):
         self.database = database
-
-
-class DbUpdater(DbConnector):
-    """ Class which allows database updating """
 
     @property
     def update_statement(self):
@@ -60,18 +56,19 @@ class DbUpdater(DbConnector):
             raise KeyError(f'Data in incorrect format! {data}')
 
 
-class DbReader(DbConnector):
+class DbReader:
     """ Class allowing to read data from database """
 
-    def __init__(self, database=DbManager()):
+    def __init__(self, database):
         self.column_name = None
-        super().__init__(database)
+        self.database = database
 
     @property
     def select_sql_statement(self):
         """ SQL statement to select data from database """
 
-        statement = f"""SELECT {self.column_name} FROM {self.database.db_table_name};"""
+        statement = f"""SELECT title, {self.column_name} FROM 
+                    {self.database.db_table_name};"""
 
         return statement
 
@@ -79,8 +76,11 @@ class DbReader(DbConnector):
         """ Executing SQL statement to fetch data from db """
 
         self.column_name = column_name
-        if self.column_name.lower() != 'title':
-            self.column_name = 'title, ' + self.column_name
         data = self.database.execute_statement(self.select_sql_statement)
 
-        return data
+        # Converting db data to dict to make results easier to print out
+        dict_data = ({'title': result['title'],
+                      self.column_name: result[self.column_name]}
+                     for result in data)
+
+        return dict_data

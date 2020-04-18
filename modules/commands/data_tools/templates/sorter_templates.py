@@ -1,12 +1,26 @@
-from modules.commands.common_utils import ExtractNumber
+from abc import abstractmethod
+
+from modules.commands.data_tools.common_utils import ExtractNumber
 
 
-class GenericSorter:
+class Sorter:
+    """ Sorter interface template for every sorter """
+
+    keyword = None  # Implement keyword in proper sorter
+    column_name = None  # Implement column_name in proper sorter
+
+    @abstractmethod
+    def sort_data(self, *args):
+        """
+        Implement specific sorting function
+        :return: sorted data
+        """
+
+        raise NotImplementedError
+
+
+class GenericSorter(Sorter):
     """ Sorting data which don't need parsing """
-
-    def __init__(self, keyword, column_name):
-        self.keyword = keyword
-        self.column_name = column_name
 
     def sort_data(self, db_results, order_factor):
         """
@@ -16,13 +30,8 @@ class GenericSorter:
         :return: Sorted generator of dict values
         """
 
-        # Converting db data to dict to make results easier to print out
-        dict_data = ({'title': result['title'],
-                      self.column_name: result[self.column_name]}
-                     for result in db_results)
-
         ordering = (order_factor.lower() == 'desc')  # True if descending sort
-        sorted_data = sorted(dict_data, key=lambda x: x[self.column_name],
+        sorted_data = sorted(db_results, key=lambda x: x[self.column_name],
                              reverse=ordering)
 
         return sorted_data
@@ -31,9 +40,7 @@ class GenericSorter:
 class ParsingSorter(GenericSorter):
     """ Sorting data which needs parsing before sort """
 
-    def __init__(self, keyword, column_name, word_to_parse):
-        self.word_to_parse = word_to_parse
-        super().__init__(keyword, column_name)
+    word_to_parse = None  # Implement word_to_parse in proper sorter
 
     def sort_data(self, db_results, order_factor):
         """

@@ -1,13 +1,14 @@
 import pytest
 
-from modules.commands.templates.sorter_templates import GenericSorter, ParsingSorter
+from modules.commands.data_tools.templates.sorter_templates import GenericSorter, \
+    ParsingSorter
 
 
 @pytest.fixture(scope='module')
 def generic_sorter():
     """ Setup of generic sorter object """
 
-    generic_sort = GenericSorter(keyword=None, column_name=None)
+    generic_sort = GenericSorter()
     yield generic_sort
 
     del generic_sort
@@ -17,7 +18,7 @@ def generic_sorter():
 def parsing_sorter():
     """ Setup of parsing sorter object """
 
-    parsing_sort = ParsingSorter(keyword=None, column_name=None, word_to_parse=None)
+    parsing_sort = ParsingSorter()
     yield parsing_sort
 
     del parsing_sort

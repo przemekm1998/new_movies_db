@@ -1,19 +1,42 @@
-from modules.commands.filter_data.filters.generic_filters import GenericFilter
-from modules.commands.filter_data.filters.generic_filters import \
-    GenericNumbersFilter
-from modules.commands.filter_data.filters.generic_filters import \
-    GenericTextFilter
+""" Available filters to use """
 from modules.commands.data_tools.common_utils import ExtractNumber
+from modules.commands.data_tools.templates.filter_templates import GenericTextFilter, \
+    GenericNumbersFilter
 
 
-class OscarsNominated(GenericTextFilter):
-    """ Filter movies which were nominated to Oscars but didn't win """
+class CastFilter(GenericTextFilter):
+    """ Filter by cast """
 
+    keyword = 'cast'
+    column_name = 'cast'
+
+
+class DirectorFilter(GenericTextFilter):
+    """ Filter by director """
+
+    keyword = 'director'
+    column_name = 'director'
+
+
+class LanguageFilter(GenericTextFilter):
+    """ Filter by language """
+
+    keyword = 'language'
+    column_name = 'language'
+
+
+class BoxOfficeFilter(GenericNumbersFilter):
+    """ Filter by box office """
+
+    keyword = 'box_office'
+    column_name = 'box_office'
+
+
+class OscarsNominationsFilter(GenericTextFilter):
+    """ Filter movies which were nominated to Oscars but didn't win any """
+
+    keyword = 'oscars_nominated'
     column_name = 'awards'
-
-    @staticmethod
-    def get_keyword():
-        return 'oscars_nominated'
 
     def get_filter_function(self, *args):
         """
@@ -31,9 +54,10 @@ class OscarsNominated(GenericTextFilter):
         return self.filter_text
 
 
-class AwardsWonPercentage(GenericNumbersFilter):
+class AwardsWonFilter(GenericNumbersFilter):
     """ Filter movies that has a particular awards won to nominations percentage """
 
+    keyword = 'awards_won'
     column_name = 'awards'
 
     def get_filter_function(self, *args):
@@ -51,7 +75,11 @@ class AwardsWonPercentage(GenericNumbersFilter):
         return filter_func
 
     def database_result_parse(self, database_result):
-        """ Parse awards string to win/nominations ratio """
+        """
+        Parse awards string to win/nominations ratio
+        :param database_result: result from database to parse
+        :return:
+        """
 
         try:
             won_awards = ExtractNumber.extract(database_result[self.column_name],
@@ -68,29 +96,3 @@ class AwardsWonPercentage(GenericNumbersFilter):
             return win_percentage
         except ZeroDivisionError:
             raise ZeroDivisionError(f"Can't divide by 0: {nominations}")
-
-    @staticmethod
-    def get_keyword():
-        return 'awards_won_percentage'
-
-
-class FilterByAwards(GenericFilter):
-    """ Class which handles filtering by cast """
-
-    column_name = 'awards'
-    available_filters = (OscarsNominated(), AwardsWonPercentage())
-
-    def get_filter_function(self, *args):
-        """
-        Get the appropriate filter function based on user request
-        :param args: ['awards', 'keyword']
-        :return:
-        """
-
-        keyword = args[1]
-
-        for available_filter in FilterByAwards.available_filters:
-            if keyword == available_filter.get_keyword():
-                filter_func = available_filter.get_filter_function(*args)
-                return filter_func
-        raise ValueError(f'Incorrect option requested: {args}')
