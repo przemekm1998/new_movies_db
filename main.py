@@ -1,7 +1,7 @@
 from modules.cli_interface import CLI
 from modules.commands.data_sorter import DataSorter
+from modules.commands.filter_data.data_filter import DataFilter
 from modules.database.db_updater import DatabaseUpdater
-from pprint import pprint
 
 
 class Main:
@@ -14,7 +14,7 @@ class Main:
         commands = CLI.get_args()  # Get parsed user args
 
         # Available handlers of commands
-        handlers = (DataSorter())
+        handlers = (DataSorter(), DataFilter())
 
         updater = DatabaseUpdater()
         updater.update()

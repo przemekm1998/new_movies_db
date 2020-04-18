@@ -60,20 +60,6 @@ class AwardsWonFilter(GenericNumbersFilter):
     keyword = 'awards_won'
     column_name = 'awards'
 
-    def get_filter_function(self, *args):
-        """
-        Return numbers filter function
-        :param args: ['column_name', 'operator', 'value'] -> ['box_office', 'lt', '10']
-        :return: Appropriate filter function
-        :raises ValueError: User passed invalid number as argument
-        """
-
-        fitted_args = args[1:]  # ['column_name', 'keyword', 'operator', 'value']
-
-        filter_func = super().get_filter_function(*fitted_args)
-
-        return filter_func
-
     def database_result_parse(self, database_result):
         """
         Parse awards string to win/nominations ratio

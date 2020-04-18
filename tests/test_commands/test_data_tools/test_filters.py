@@ -1,8 +1,6 @@
 import pytest
 
 from modules.commands.data_tools.filters import OscarsNominationsFilter, AwardsWonFilter
-from modules.commands.data_tools.templates.filter_templates import GenericTextFilter, \
-    GenericNumbersFilter
 
 
 @pytest.fixture(scope='module')

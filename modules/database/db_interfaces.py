@@ -2,11 +2,13 @@
 
 import sqlite3
 
+from modules.database.db_manager import DbManager
+
 
 class DbUpdater:
     """ Class which allows database updating """
 
-    def __init__(self, database):
+    def __init__(self, database=DbManager()):
         self.database = database
 
     @property
@@ -59,7 +61,7 @@ class DbUpdater:
 class DbReader:
     """ Class allowing to read data from database """
 
-    def __init__(self, database):
+    def __init__(self, database=DbManager()):
         self.column_name = None
         self.database = database
 
@@ -67,7 +69,8 @@ class DbReader:
     def select_sql_statement(self):
         """ SQL statement to select data from database """
 
-        statement = f"""SELECT title, {self.column_name} FROM 
+        statement = f"""SELECT {self.database.db_table_name}.title, 
+                    {self.database.db_table_name}.{self.column_name} FROM 
                     {self.database.db_table_name};"""
 
         return statement
