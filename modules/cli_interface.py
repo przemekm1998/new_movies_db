@@ -14,12 +14,7 @@ class CLI:
         parser.add_argument('--version', action='version', version='1.0.0')
 
         # Sorting records
-        parser.add_argument('--sort_by', help='sort records', action='store', nargs=1,
-                            choices=['id', 'title', 'year', 'runtime', 'genre',
-                                     'director', 'cast', 'writer', 'language',
-                                     'country',
-                                     'awards', 'imdb_rating', 'imdb_votes',
-                                     'box_office'],
+        parser.add_argument('--sort_by', help='sort records', action='store', nargs=2,
                             type=str)
 
         # Filtering records
@@ -33,6 +28,7 @@ class CLI:
         #                     metavar=('compare_type', 'value'))
 
         args = parser.parse_args()
+        print(args.sort_by)
 
         commands = {'sort_by': args.sort_by,
                     'filter_by': args.filter_by}

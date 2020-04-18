@@ -31,10 +31,11 @@ class DataSorter(DbReader, CommandHandler):
         """
 
         requested_sorter = args[0]
-
         for sorter in self.sorters:
             if requested_sorter == sorter.keyword:
                 db_data = self.select_data_from_db(sorter.column_name)
+
+                # Prevent None values from sorting
                 filtered_data = filter(lambda x: x[sorter.column_name], db_data)
 
                 sort_order = args[1]
@@ -42,4 +43,3 @@ class DataSorter(DbReader, CommandHandler):
 
                 return sorted_data
         raise ValueError(f"Given sort option doesn't exist: {requested_sorter}")
-

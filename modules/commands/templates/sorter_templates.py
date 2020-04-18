@@ -16,8 +16,13 @@ class GenericSorter:
         :return: Sorted generator of dict values
         """
 
+        # Converting db data to dict to make results easier to print out
+        dict_data = ({'title': result['title'],
+                      self.column_name: result[self.column_name]}
+                     for result in db_results)
+
         ordering = (order_factor.lower() == 'desc')  # True if descending sort
-        sorted_data = sorted(db_results, key=lambda x: x[self.column_name],
+        sorted_data = sorted(dict_data, key=lambda x: x[self.column_name],
                              reverse=ordering)
 
         return sorted_data

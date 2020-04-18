@@ -1,5 +1,4 @@
 from modules.cli_interface import CLI
-from modules.commands.filter_data.data_filter import DataFilter
 from modules.commands.data_sorter import DataSorter
 from modules.database.db_updater import DatabaseUpdater
 from pprint import pprint
@@ -15,7 +14,7 @@ class Main:
         commands = CLI.get_args()  # Get parsed user args
 
         # Available handlers of commands
-        handlers = (DataSorter(), DataFilter())
+        handlers = (DataSorter())
 
         updater = DatabaseUpdater()
         updater.update()
@@ -34,7 +33,7 @@ class Main:
         for key in commands.keys():
             if commands[key]:
                 for handler in handlers:
-                    if key == handler.get_keyword():
+                    if key == handler.keyword:
                         parameters = commands[key]
                         results = handler.handle(*parameters)
                         Main.print_results(results)
@@ -47,8 +46,8 @@ class Main:
         :return:
         """
 
-        for key in results:
-            pprint(results[key])
+        for result in results:
+            print(result)
 
 
 if __name__ == '__main__':

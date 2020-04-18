@@ -6,7 +6,7 @@ from modules.database.db_manager import DbManager
 class DbConnector:
     """ Class managing database connection """
 
-    def __init__(self, database=DbManager()):
+    def __init__(self, database):
         self.database = database
 
 
