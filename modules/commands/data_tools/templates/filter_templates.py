@@ -177,4 +177,5 @@ class GenericTextFilter(GenericFilter):
 
         found = bool(
             re.search(rf'{self.value_to_filter}', database_result[self.column_name]))
+
         return found

@@ -51,7 +51,7 @@ def fake_database_results():
          "imdbRating": 9.2, "imdbVotes": 1516505, "box_office": None},
 
         {"title": "The Dark Knight", "year": 2008, "runtime": "152 min",
-         "genre": "Action, Crime, Drama, Thriller", "Director": "Christopher Nolan",
+         "genre": "Action, Crime, Drama, Thriller", "director": "Christopher Nolan",
          "writer": "Jonathan Nolan (screenplay), Christopher Nolan (screenplay), "
                    "Christopher Nolan (story), David S. Goyer (story), Bob Kane (characters)",
          "actors": "Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",
@@ -70,6 +70,7 @@ def fake_database_results():
                              ('title', ['Shawshank'], [True, False, False]),
                              ('genre', ['Drama'], [True, True, True]),
                              ('genre', ['Crime'], [False, True, True]),
+                             ('director', ['Christopher Nolan'], [False, False, True])
                          ])
 def test_generic_text_filter(fake_database_results, generic_text_filter,
                              column, args, results):

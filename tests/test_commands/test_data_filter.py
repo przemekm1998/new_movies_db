@@ -1,25 +1,63 @@
 import pytest
 
-from modules.commands.filter_data.data_filter import DataFilter
+from modules.commands.data_filter import DataFilter
 from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')
-def database():
+def insert_statement():
+    """ Setup of SQL insert statement """
+
+    statement = f"""INSERT INTO MOVIES(title, year, runtime, genre, 
+    director, writer, cast, language, awards, imdb_rating, imdb_votes, box_office) 
+    VALUES (:title, :year, :runtime, :genre, :director, :writer, :actors, 
+    :language, :awards, :imdbRating, :imdbVotes, :box_office);"""
+
+    yield statement
+
+    del statement
+
+
+@pytest.fixture(scope='module')
+def database(insert_statement):
     """ Setup of the in memory database """
 
-    database = DbManager(db_name=":memory:")
+    database = DbManager(db_name=':memory:')
 
-    database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
-        box_office, director, cast, language, awards) VALUES ('Gods', 2012, 6.8, 
-        150, 'Lukasz Palkowski', 'Tomasz Kot, Piotr Glowacki', 'Polish',
-        'Nominated for 3 Oscars. Another 9 wins & 10 nominations.');""")
-    database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
-        director, cast, language, awards) VALUES ('Memento', 2014, 7.7, 
-        'Christopher Nolan', 'Guy Pearce, Carrie-Anne Moss', 'English',
-        'Won 2 Oscars. Another 8 wins & 10 nominations');""")
+    data_to_insert = [
+
+        {"title": "The Shawshank Redemption", "year": 1994, "runtime": "142 min",
+         "genre": "Drama",
+         "director": "Frank Darabont",
+         "writer": "Stephen King (short story \"Rita Hayworth and Shawshank "
+                   "Redemption\"), Frank Darabont (screenplay)",
+         "actors": "Tim Robbins, Morgan Freeman, Bob Gunton, William Sadler",
+         "language": "English",
+         "awards": "Nominated for 7 Oscars. Another 21 wins & 35 nominations.",
+         "imdbRating": 9.3, "imdbVotes": 2217195,
+         "box_office": None},
+
+        {"title": "The Godfather", "year": 1972, "runtime": "175 min",
+         "genre": "Crime, Drama",
+         "director": "Francis Ford Coppola",
+         "writer": "Mario Puzo (screenplay by), Francis Ford Coppola (screenplay by), Mario Puzo (based on the novel by)",
+         "actors": "Marlon Brando, Al Pacino, James Caan, Richard S. Castellano",
+         "language": "English, Italian, Latin",
+         "awards": "Won 3 Oscars. Another 26 wins & 30 nominations.",
+         "imdbRating": 9.2, "imdbVotes": 1516505, "box_office": None},
+
+        {"title": "The Dark Knight", "year": 2008, "runtime": "152 min",
+         "genre": "Action, Crime, Drama, Thriller", "director": "Christopher Nolan",
+         "writer": "Jonathan Nolan (screenplay), Christopher Nolan (screenplay), "
+                   "Christopher Nolan (story), David S. Goyer (story), Bob Kane (characters)",
+         "actors": "Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",
+         "language": "English, Mandarin",
+         "awards": "Won 2 Oscars. Another 153 wins & 159 nominations.",
+         "imdbRating": 9.0, "imdbVotes": 2184673, "box_office": 533316061}
+    ]
+
+    for data in data_to_insert:
+        database.cursor.execute(insert_statement, data)
 
     yield database
 
@@ -30,134 +68,37 @@ def database():
 def data_filter(database):
     """ Setup of data sorter class """
 
-    data_filter = DataFilter(database=database)
+    data_filter = DataFilter(database)
     yield data_filter
 
     del data_filter
 
 
-def test_keyword(data_filter):
-    """ Verify data_filter keyword """
-
-    assert data_filter.get_keyword() == 'filter_by'
-
-
-@pytest.mark.parametrize('column_name, result',
+@pytest.mark.parametrize('args, column_name, result_title, result_value',
                          [
-                             ('year', 2012),
-                             ('imdb_rating', 6.8),
-                             ('box_office', 150),
-                             ('director', 'Lukasz Palkowski'),
-                             ('cast', 'Tomasz Kot, Piotr Glowacki'),
-                             ('language', 'Polish'),
-                             ('awards',
-                              'Nominated for 3 Oscars. Another 9 wins & 10 nominations.'
-                              )
+                             (['director', 'Christopher Nolan'], 'director',
+                              'The Dark Knight', 'Christopher Nolan'),
+                             (['cast', 'Marlon Brando'], 'cast',
+                              'The Godfather', 'Marlon Brando'),
+                             (['oscars_nominated'], 'awards',
+                              'The Shawshank Redemption', 'Nominated for 7 Oscars'),
+                             (['language', 'Mandarin'], 'language',
+                              'The Dark Knight', 'Mandarin'),
                          ])
-def test_select_statement(data_filter, column_name, result):
-    """ Verify correctness of sql statement """
-
-    data_filter.column = column_name
-
-    statement = data_filter.select_sql_statement
-    results = data_filter.database.execute_statement(statement)
-
-    db_result = next(results)
-    assert db_result['Title'] == 'Gods'
-    assert db_result[column_name] == result
-
-
-def test_handle_filter_cast(data_filter):
-    """ Verify filtering by cast """
-
-    args = ['cast', 'Tomasz Kot']
-
-    results = data_filter.handle(*args)
-    db_result = next(results)
-
-    assert db_result['Title'] == 'Gods'
-    assert args[1] in db_result['Cast']
-
-    with pytest.raises(StopIteration):
-        next_result = next(results)
-
-
-def test_handle_filter_director(data_filter):
-    """ Verify filtering by director """
-
-    args = ['director', 'Christopher Nolan']
-
-    results = data_filter.handle(*args)
-    db_result = next(results)
-
-    assert db_result['Title'] == 'Memento'
-    assert args[1] in db_result['Director']
-
-    with pytest.raises(StopIteration):
-        next_result = next(results)
-
-
-def test_handle_filter_language(data_filter):
-    """ Verify filtering by language """
-
-    args = ['language', 'Polish']
-
-    results = data_filter.handle(*args)
-    db_result = next(results)
-
-    assert db_result['Title'] == 'Gods'
-    assert args[1] in db_result['language']
-
-    with pytest.raises(StopIteration):
-        next_result = next(results)
-
-
-def test_handle_filter_box_office(data_filter):
-    """ Verify filtering by language """
-
-    args = ['box_office', 'gt', '100']
-
-    results = data_filter.handle(*args)
-    db_result = next(results)
-
-    assert db_result['Title'] == 'Gods'
-
-    with pytest.raises(StopIteration):
-        next_result = next(results)
-
-
-def test_handle_filter_oscars(data_filter):
-    """ Verify filtering by oscars nominations """
-
-    args = ['awards', 'oscars_nominated']
-
-    results = data_filter.handle(*args)
-    db_result = next(results)
-
-    assert db_result['Title'] == 'Gods'
-
-    with pytest.raises(StopIteration):
-        next_result = next(results)
-
-
-def test_handle_filter_awards_won(data_filter):
-    """ Verify filtering by oscars nominations """
-
-    args = ['awards', 'awards_won_percentage', 'gte', '80']
+def test_handle(data_filter, args, result_title, result_value, column_name):
+    """ Verify if executed sorting is correct """
 
     results = data_filter.handle(*args)
 
-    db_result = next(results)
-    assert db_result['Title'] == 'Gods'
-
-    next_result = next(results)
-    assert next_result['Title'] == 'Memento'
+    result = next(results)
+    assert result['title'] == result_title
+    assert result_value in result[column_name]
 
 
-def test_handle_invalid_filter(data_filter):
-    """ Verify if method handle throws correct exception """
+def test_handle_incorrect_keyword(data_filter):
+    """ Verify if exception is thrown when inapropriate keyword is given """
 
-    args = ['something_strange']
+    args = ['this_keyword_doesnt_exist', 'asc']
 
     with pytest.raises(ValueError):
-        results = data_filter.handle(*args)
+        data_filter.handle(*args)
