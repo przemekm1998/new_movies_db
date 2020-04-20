@@ -1,77 +1,38 @@
 """ Comparing data by given parameter """
 
 from modules.commands.commands_handler import CommandHandler
-from modules.commands.comparators.generic_comparator import GenericComparator
-from modules.commands.comparators.parsing_comparator import ParsingComparator
-from modules.database.db_manager import DbManager
+from modules.commands.data_tools.comparators import (BoxOfficeCompare,
+                                                     ImdbRatingCompare,
+                                                     RuntimeCompare, AwardsWonCompare)
+from modules.database.db_interfaces import DbReader
 
 
-class DataCompare(CommandHandler):
+class DataCompare(DbReader, CommandHandler):
     """ Class containing methods needed to compare data """
 
-    available_comparators = (GenericComparator(keyword='box_office',
-                                               column_name='box_office'),
-                             GenericComparator(keyword='imdb_rating',
-                                               column_name='imdb_rating'),
-                             ParsingComparator(keyword='runtime',
-                                               column_name='runtime',
-                                               word_to_parse='min'),
-                             ParsingComparator(keyword='awards_won',
-                                               column_name='awards',
-                                               word_to_parse='wins'))
+    keyword = 'compare_by'
 
-    def __init__(self, database=DbManager()):
-        self.column = None
-        super().__init__(database)
-
-    @property
-    def select_sql_statement(self):
-        """ Select data to be compared based on given column """
-
-        statement = f"""SELECT {self.database.db_table_name}.title, 
-                    {self.database.db_table_name}.{self.column} 
-                    FROM {self.database.db_table_name};"""
-
-        return statement
+    available_comparators = (BoxOfficeCompare(), ImdbRatingCompare(), RuntimeCompare(),
+                             AwardsWonCompare())
 
     def handle(self, *args):
         """
         Handle compare command request
-        :param args: ['comparator_keyword', 'Title1', 'Title2']
-        :return:
+        :param args: ['comparator_keyword', 'Title1', 'Title2', ...]
+        :return: Highest result of comparison
         """
 
         requested_comparator = args[0]
 
         for comparator in self.available_comparators:
             if requested_comparator == comparator.keyword:
-                titles_to_compare = args[1:]  # Extract titles
-                highest_result = self.execute_comparison(comparator, *titles_to_compare)
+                db_data = self.select_data_from_db(comparator.column_name)
 
-                return highest_result
+                titles_to_compare = args[1:]  # Extract only titles
+                filtered_db_data = filter(lambda x: x['title'] in titles_to_compare,
+                                          db_data)
+                result = comparator.compare_data(filtered_db_data)
+
+                return result
 
         raise ValueError(f'Incorrect compare option given: {requested_comparator}')
-
-    def execute_comparison(self, comparator, *titles_to_compare):
-        """
-        Execute single data comparison
-        :param comparator: Selected comparator
-        :param titles_to_compare: Titles given by user
-        :return:
-        """
-
-        # Geting the data from the database
-        self.column = comparator.column_name
-        db_data = self.database.execute_statement(self.select_sql_statement)
-
-        # Filter db results with particular titles to compare
-        filtered_db_data = filter(lambda x: x['Title'] in titles_to_compare,
-                                  db_data)
-
-        # Select max from filtered data
-        result = comparator.compare_data(filtered_db_data)
-
-        return result
-
-    def get_keyword(self):
-        return 'compare_by'

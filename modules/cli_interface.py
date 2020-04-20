@@ -23,14 +23,14 @@ class CLI:
                             metavar=('column', 'value'))
 
         # Comparing records
-        # parser.add_argument('--compare_by', help='compare records', action='store',
-        #                     nargs='+', type=str,
-        #                     metavar=('compare_type', 'value'))
+        parser.add_argument('--compare_by', help='compare records', action='store',
+                            nargs='+', type=str,
+                            metavar=('compare_type', 'value'))
 
         args = parser.parse_args()
-        print(args.sort_by)
 
         commands = {'sort_by': args.sort_by,
-                    'filter_by': args.filter_by}
+                    'filter_by': args.filter_by,
+                    'compare_by': args.compare_by}
 
         return commands

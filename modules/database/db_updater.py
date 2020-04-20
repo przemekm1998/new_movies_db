@@ -13,8 +13,6 @@ class DatabaseUpdater(DbUpdater, DbReader):
     def update(self):
         """ Handling updating the database data """
 
-        print('\nCHECKING FOR DATABASE UPDATE\n')  # Info for the user
-
         # Get titles with empty data
         titles_with_no_data = self.get_titles_with_no_data()
 

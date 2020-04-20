@@ -73,9 +73,9 @@ class AwardsWonFilter(GenericNumbersFilter):
             nominations = ExtractNumber.extract(database_result[self.column_name],
                                                 'nominations')
         except TypeError:
-            raise
+            raise TypeError(f"Incorrect data type error: {database_result}")
         except IndexError:
-            raise
+            raise IndexError(f"Incorrect data error: {database_result}")
 
         try:
             win_percentage = (won_awards / nominations) * 100  # Percentage calculation

@@ -86,3 +86,27 @@ def test_awards_won_filter_database_parse(fake_database_results, awards_won_filt
 
     result = awards_won_filter.database_result_parse(fake_database_results[2])
     assert result == 96.22641509433963
+
+
+def test_awards_won_database_parse_not_enough_data(awards_won_filter):
+    """ Verify if proper exceprion is throws """
+
+    db_incorrect_result = {
+        'title': 'something',
+        "awards": "Won 2 Oscars. Another 153 wins."
+    }
+
+    with pytest.raises(IndexError):
+        awards_won_filter.database_result_parse(db_incorrect_result)
+
+
+def test_awards_won_database_parse_incorrect_type(awards_won_filter):
+    """ Verify if proper exceprion is throws """
+
+    db_incorrect_result = {
+        'title': 'something',
+        "awards": 1654
+    }
+
+    with pytest.raises(TypeError):
+        awards_won_filter.database_result_parse(db_incorrect_result)

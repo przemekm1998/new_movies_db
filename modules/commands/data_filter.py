@@ -9,13 +9,11 @@ from modules.database.db_manager import DbManager
 class DataFilter(DbReader, CommandHandler):
     """ This class contains every method needed for filtering data """
 
+    keyword = 'filter_by'
+
     # Filters available to use
     filters = (CastFilter(), DirectorFilter(), LanguageFilter(), BoxOfficeFilter(),
                OscarsNominationsFilter(), AwardsWonFilter())
-
-    def __init__(self, database=DbManager()):
-        super().__init__(database)
-        self.column = None  # Column to filter
 
     def handle(self, *args):
         """

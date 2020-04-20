@@ -16,13 +16,13 @@ class DbUpdater:
         """ SQL statement to update database row """
 
         statement = f"""UPDATE {self.database.db_table_name} 
-                        SET year = :year, runtime = :runtime,
-                        genre = :genre, director = :director, writer = :writer,
-                        cast = :cast, language = :language,
-                        country = :country, awards = :awards, 
+                        SET year = :Year, runtime = :Runtime,
+                        genre = :Genre, director = :Director, writer = :Writer,
+                        cast = :Cast, language = :Language,
+                        country = :Country, awards = :Awards, 
                         imdb_Rating = :imdbRating, imdb_Votes = :imdbVotes,
                         box_office = :BoxOffice
-                        WHERE title = :title"""
+                        WHERE title = :Title"""
 
         return statement
 
@@ -35,27 +35,15 @@ class DbUpdater:
 
         try:
             with self.database.connection:
-                self.database.cursor.execute(self.update_statement,
-                                             {'title': data['Title'],
-                                              'year': data['Year'],
-                                              'runtime': data['Runtime'],
-                                              'genre': data['Genre'],
-                                              'director': data['Director'],
-                                              'writer': data['Writer'],
-                                              'cast': data['Cast'],
-                                              'language': data['Language'],
-                                              'country': data['Country'],
-                                              'awards': data['Awards'],
-                                              'imdbRating': data['imdbRating'],
-                                              'imdbVotes': data['imdbVotes'],
-                                              'BoxOffice': data['BoxOffice']
-                                              })
+                self.database.cursor.execute(self.update_statement, data)
         except sqlite3.IntegrityError as error:
             raise error
         except sqlite3.OperationalError as error:
             raise error
         except KeyError:
             raise KeyError(f'Data in incorrect format! {data}')
+
+        print(f"Updated data for {data['Title']}")
 
 
 class DbReader:

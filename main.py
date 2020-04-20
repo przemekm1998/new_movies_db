@@ -1,6 +1,7 @@
 from modules.cli_interface import CLI
+from modules.commands.data_compare import DataCompare
+from modules.commands.data_filter import DataFilter
 from modules.commands.data_sorter import DataSorter
-from modules.commands.filter_data.data_filter import DataFilter
 from modules.database.db_updater import DatabaseUpdater
 
 
@@ -14,7 +15,7 @@ class Main:
         commands = CLI.get_args()  # Get parsed user args
 
         # Available handlers of commands
-        handlers = (DataSorter(), DataFilter())
+        handlers = (DataSorter(), DataFilter(), DataCompare())
 
         updater = DatabaseUpdater()
         updater.update()
@@ -46,8 +47,11 @@ class Main:
         :return:
         """
 
-        for result in results:
-            print(result)
+        if type(results) is not list():
+            print(results)
+        else:
+            for result in results:
+                print(result)
 
 
 if __name__ == '__main__':

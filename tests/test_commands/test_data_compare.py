@@ -5,28 +5,59 @@ from modules.database.db_manager import DbManager
 
 
 @pytest.fixture(scope='module')
-def database():
+def insert_statement():
+    """ Setup of SQL insert statement """
+
+    statement = f"""INSERT INTO MOVIES(title, year, runtime, genre, 
+    director, writer, cast, language, awards, imdb_rating, imdb_votes, box_office) 
+    VALUES (:title, :year, :runtime, :genre, :director, :writer, :actors, 
+    :language, :awards, :imdbRating, :imdbVotes, :box_office);"""
+
+    yield statement
+
+    del statement
+
+
+@pytest.fixture(scope='module')
+def database(insert_statement):
     """ Setup of the in memory database """
 
-    database = DbManager(db_name=":memory:")
+    database = DbManager(db_name=':memory:')
 
-    database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
-        runtime, box_office, awards) 
-        VALUES ('Gods', 2012, 6.8, '120 min', 100,
-        'Nominated for 3 Oscars. Another 9 wins & 10 nominations.');""")
+    data_to_insert = [
 
-    database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
-        runtime, box_office, awards) 
-        VALUES ('Memento', 2014, 7.7, '180 min', 1000,
-        'Won 2 Oscars. Another 8 wins & 10 nominations');""")
+        {"title": "The Shawshank Redemption", "year": 1994, "runtime": "142 min",
+         "genre": "Drama",
+         "director": "Frank Darabont",
+         "writer": "Stephen King (short story \"Rita Hayworth and Shawshank "
+                   "Redemption\"), Frank Darabont (screenplay)",
+         "actors": "Tim Robbins, Morgan Freeman, Bob Gunton, William Sadler",
+         "language": "English",
+         "awards": "Nominated for 7 Oscars. Another 21 wins & 35 nominations.",
+         "imdbRating": 9.3, "imdbVotes": 2217195,
+         "box_office": None},
 
-    database.execute_statement(
-        f"""INSERT INTO {database.db_table_name}(TITLE, year, imdb_rating, 
-        runtime, box_office, awards) 
-        VALUES ('Batman', 2015, 8.6, '200 min', 50,
-        '5 wins & 10 nominations');""")
+        {"title": "The Godfather", "year": 1972, "runtime": "175 min",
+         "genre": "Crime, Drama",
+         "director": "Francis Ford Coppola",
+         "writer": "Mario Puzo (screenplay by), Francis Ford Coppola (screenplay by), Mario Puzo (based on the novel by)",
+         "actors": "Marlon Brando, Al Pacino, James Caan, Richard S. Castellano",
+         "language": "English, Italian, Latin",
+         "awards": "Won 3 Oscars. Another 26 wins & 30 nominations.",
+         "imdbRating": 9.2, "imdbVotes": 1516505, "box_office": None},
+
+        {"title": "The Dark Knight", "year": 2008, "runtime": "152 min",
+         "genre": "Action, Crime, Drama, Thriller", "director": "Christopher Nolan",
+         "writer": "Jonathan Nolan (screenplay), Christopher Nolan (screenplay), "
+                   "Christopher Nolan (story), David S. Goyer (story), Bob Kane (characters)",
+         "actors": "Christian Bale, Heath Ledger, Aaron Eckhart, Michael Caine",
+         "language": "English, Mandarin",
+         "awards": "Won 2 Oscars. Another 153 wins & 159 nominations.",
+         "imdbRating": 9.0, "imdbVotes": 2184673, "box_office": 533316061}
+    ]
+
+    for data in data_to_insert:
+        database.cursor.execute(insert_statement, data)
 
     yield database
 
@@ -35,45 +66,42 @@ def database():
 
 @pytest.fixture(scope='module')
 def data_comparator(database):
-    """ Setup of data comparator object """
+    """ Setup of data compare class """
 
-    comparator = DataCompare(database)
-    yield comparator
+    data_comp = DataCompare(database)
+    yield data_comp
 
-    del comparator
-
-
-def test_get_keyword(data_comparator):
-    """ Verify keyword of data_comparator """
-
-    assert data_comparator.get_keyword() == 'compare_by'
+    del data_comp
 
 
 @pytest.mark.parametrize('args, result_title, result_value',
                          [
-                             (['runtime', 'Gods', 'Batman'],
-                              'Batman', 200),
-                             (['box_office', 'Gods', 'Memento'],
-                              'Memento', 1000),
-                             (['imdb_rating', 'Gods', 'Memento'],
-                              'Memento', 7.7),
-                             (['awards_won', 'Batman', 'Memento'],
-                              'Memento', 8),
+                             (['imdb_rating', 'The Shawshank Redemption',
+                               'The Godfather', 'The Dark Knight'],
+                              'The Shawshank Redemption', 9.3),
+                             (['box_office', 'The Godfather', 'The Dark Knight'],
+                              'The Dark Knight', 533316061),
+                             (['awards_won', 'The Godfather',
+                               'The Shawshank Redemption'],
+                              'The Godfather', 26),
+                             (['runtime', 'The Godfather', 'The Dark Knight',
+                               'The Shawshank Redemption'],
+                              'The Godfather', 175),
                          ])
 def test_handle(data_comparator, args, result_title, result_value):
-    """ Verify if executed comparison is correct """
+    """ Verify if executed sorting is correct """
 
-    keyword = args[0]
     result = data_comparator.handle(*args)
+    keys = list(result.keys())
 
-    assert result['title'] == result_title
-    assert result[keyword] == result_value
+    assert result[keys[0]] == result_title
+    assert result[keys[1]] == result_value
 
 
 def test_handle_incorrect_keyword(data_comparator):
     """ Verify if exception is thrown when inapropriate keyword is given """
 
-    args = ['this_keyword_doesnt_exist', 'Gods', 'Memento']
+    args = ['this_keyword_doesnt_exist', 'asc']
 
     with pytest.raises(ValueError):
         data_comparator.handle(*args)
