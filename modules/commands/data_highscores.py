@@ -1,38 +1,18 @@
 """ Comparing data by given parameter """
 
 from modules.commands.commands_handler import CommandHandler
-from modules.commands.comparators.generic_comparator import GenericComparator
-from modules.commands.comparators.parsing_comparator import ParsingComparator
-from modules.database.db_manager import DbManager
+from modules.commands.data_tools.comparators import BoxOfficeCompare, ImdbRatingCompare, \
+    RuntimeCompare, AwardsWonCompare
+from modules.database.db_interfaces import DbReader
 
 
-class DataHighscores(CommandHandler):
+class DataHighscores(DbReader, CommandHandler):
     """ Class containing methods needed to calculate highscores """
 
-    available_comparators = (GenericComparator(keyword='box_office',
-                                               column_name='box_office'),
-                             GenericComparator(keyword='imdb_rating',
-                                               column_name='imdb_rating'),
-                             ParsingComparator(keyword='runtime',
-                                               column_name='runtime',
-                                               word_to_parse='min'),
-                             ParsingComparator(keyword='awards_won',
-                                               column_name='awards',
-                                               word_to_parse='wins'))
+    keyword = 'highscores'
 
-    def __init__(self, database=DbManager()):
-        self.column = None
-        super().__init__(database)
-
-    @property
-    def select_sql_statement(self):
-        """ Select data to be compared based on given column """
-
-        statement = f"""SELECT {self.database.db_table_name}.title, 
-                    {self.database.db_table_name}.{self.column} 
-                    FROM {self.database.db_table_name};"""
-
-        return statement
+    available_comparators = (BoxOfficeCompare(), ImdbRatingCompare(), RuntimeCompare(),
+                             AwardsWonCompare())
 
     def handle(self, *args):
         """
@@ -44,31 +24,28 @@ class DataHighscores(CommandHandler):
         results = list()
 
         for comparator in self.available_comparators:
-            # Geting the data from the database
-            self.column = comparator.column_name
-            db_data = self.database.execute_statement(self.select_sql_statement)
+            db_data = self.select_data_from_db(comparator.column_name)
 
-            # Select highest result from filtered data
-            comparator_result = comparator.compare_data(db_data)
+            try:
+                result = comparator.compare_data(db_data)
+            except ValueError as error:
+                raise error
 
-            formatted_result = self.format_results(comparator, comparator_result)
+            formatted_result = self.format_result(result, comparator.keyword)
             results.append(formatted_result)
 
         return results
 
     @staticmethod
-    def format_results(comparator, comparator_result):
+    def format_result(comparator_result, comparator_keyword):
         """
         Formatting the full results into dict
-        :param comparator: Used comparator
+        :param comparator_keyword: Used comparator's keyword
         :param comparator_result: Result returned by comparator
         :return: Formatted dict
         """
 
-        final_result = {'category': comparator.keyword}
+        final_result = {'category': comparator_keyword}
         final_result.update(comparator_result)
 
         return final_result
-
-    def get_keyword(self):
-        return 'highscores'

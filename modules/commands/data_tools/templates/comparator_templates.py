@@ -45,9 +45,9 @@ class ParsingComparator(GenericComparator):
             parsed_data = ExtractNumber.extract(db_result[self.column_name],
                                                 self.word_to_parse)
         except IndexError:
-            raise IndexError(f'DB_DATA error: {db_result[self.column_name]}')
+            parsed_data = None
         except TypeError:
-            raise TypeError(f'DB_DATA error: {db_result[self.column_name]}')
+            parsed_data = None
 
         results = {'title': db_result['title'], self.column_name: parsed_data}
 

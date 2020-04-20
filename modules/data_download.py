@@ -80,12 +80,13 @@ class DataDownloader:
             imdb_rating = float(response['imdbRating'])  # json response is in str
             imdb_votes = self.leave_digits(response['imdbVotes'])
             box_office = self.leave_digits(response['BoxOffice'])
+            awards = response['Awards'] if response['Awards'] != 'N/A' else None
 
             result = {'Title': response['Title'], 'Year': year,
                       'Runtime': response['Runtime'], 'Genre': response['Genre'],
                       'Director': response['Director'], 'Writer': response['Writer'],
                       'Cast': response['Actors'], 'Language': response['Language'],
-                      'Country': response['Country'], 'Awards': response['Awards'],
+                      'Country': response['Country'], 'Awards': awards,
                       'imdbRating': imdb_rating, 'imdbVotes': imdb_votes,
                       'BoxOffice': box_office}
         except KeyError:

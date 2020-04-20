@@ -27,10 +27,14 @@ class CLI:
                             nargs='+', type=str,
                             metavar=('compare_type', 'value'))
 
+        # Highscores
+        parser.add_argument('--highscores', help='show highscores', action='store_true')
+
         args = parser.parse_args()
 
         commands = {'sort_by': args.sort_by,
                     'filter_by': args.filter_by,
-                    'compare_by': args.compare_by}
+                    'compare_by': args.compare_by,
+                    'highscores': args.highscores}
 
         return commands

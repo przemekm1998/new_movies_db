@@ -1,6 +1,7 @@
 from modules.cli_interface import CLI
 from modules.commands.data_compare import DataCompare
 from modules.commands.data_filter import DataFilter
+from modules.commands.data_highscores import DataHighscores
 from modules.commands.data_sorter import DataSorter
 from modules.database.db_updater import DatabaseUpdater
 
@@ -12,30 +13,31 @@ class Main:
     def main():
         """ Main program function """
 
-        commands = CLI.get_args()  # Get parsed user args
-
         # Available handlers of commands
-        handlers = (DataSorter(), DataFilter(), DataCompare())
+        handlers = (DataSorter(), DataFilter(), DataCompare(), DataHighscores())
 
+        # Database check
         updater = DatabaseUpdater()
         updater.update()
 
-        Main.handle_commands(commands, handlers)
+        Main.handle_commands(handlers)
 
     @staticmethod
-    def handle_commands(commands, handlers):
+    def handle_commands(handlers):
         """
         Handling every commands request within a loop
-        :param commands: Commands requested by user
         :param handlers: List of available handling commands classes
         :return:
         """
+
+        commands = CLI.get_args()  # Get parsed user args
 
         for key in commands.keys():
             if commands[key]:
                 for handler in handlers:
                     if key == handler.keyword:
-                        parameters = commands[key]
+                        parameters = commands[key] if type(commands[key]) is list \
+                            else list()
                         results = handler.handle(*parameters)
                         Main.print_results(results)
 
@@ -47,7 +49,7 @@ class Main:
         :return:
         """
 
-        if type(results) is not list():
+        if type(results) is not list:
             print(results)
         else:
             for result in results:

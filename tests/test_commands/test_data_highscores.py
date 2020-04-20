@@ -1,6 +1,6 @@
 import pytest
 
-from modules.commands.data_compare import DataCompare
+from modules.commands.data_highscores import DataHighscores
 from modules.database.db_manager import DbManager
 
 
@@ -65,52 +65,46 @@ def database(insert_statement):
 
 
 @pytest.fixture(scope='module')
-def data_comparator(database):
+def data_highscores(database):
     """ Setup of data compare class """
 
-    data_comp = DataCompare(database)
-    yield data_comp
+    highscores = DataHighscores(database)
+    yield highscores
 
-    del data_comp
-
-
-@pytest.mark.parametrize('args, result_title, result_value',
-                         [
-                             (['imdb_rating', 'The Shawshank Redemption',
-                               'The Godfather', 'The Dark Knight'],
-                              'The Shawshank Redemption', 9.3),
-                             (['box_office', 'The Godfather', 'The Dark Knight'],
-                              'The Dark Knight', 533316061),
-                             (['awards_won', 'The Godfather',
-                               'The Shawshank Redemption'],
-                              'The Godfather', 26),
-                             (['runtime', 'The Godfather', 'The Dark Knight',
-                               'The Shawshank Redemption'],
-                              'The Godfather', 175),
-                         ])
-def test_handle(data_comparator, args, result_title, result_value):
-    """ Verify if executed sorting is correct """
-
-    result = data_comparator.handle(*args)
-    keys = list(result.keys())
-
-    assert result[keys[0]] == result_title
-    assert result[keys[1]] == result_value
+    del highscores
 
 
-def test_handle_incorrect_keyword(data_comparator):
-    """ Verify if exception is thrown when inapropriate keyword is given """
+def test_format_result(data_highscores):
+    """ Verify if final result is formatted correctly """
 
-    args = ['this_keyword_doesnt_exist', 'asc']
+    comparator_result = {'title': 'something', 'runtime': 125}
+    comparator_keyword = 'runtime_extra'
 
-    with pytest.raises(ValueError):
-        data_comparator.handle(*args)
+    formatted_result = data_highscores.format_result(comparator_result,
+                                                     comparator_keyword)
+
+    assert formatted_result['title'] == 'something'
+    assert formatted_result['runtime'] == 125
+    assert formatted_result['category'] == 'runtime_extra'
 
 
-def test_handle_data_with_none_values(data_comparator):
-    """ Verify if exception is thrown when inapropriate keyword is given """
+def test_handle(data_highscores):
+    """ Verify if handle method works properly """
 
-    args = ['The Godfather', 'The Shawshank Redemption']
+    results = data_highscores.handle()
 
-    with pytest.raises(ValueError):
-        data_comparator.handle(*args)
+    assert results[0]['category'] == 'box_office'
+    assert results[0]['title'] == 'The Dark Knight'
+    assert results[0]['box_office'] == 533316061
+
+    assert results[1]['category'] == 'imdb_rating'
+    assert results[1]['title'] == 'The Shawshank Redemption'
+    assert results[1]['imdb_rating'] == 9.3
+
+    assert results[2]['category'] == 'runtime'
+    assert results[2]['title'] == 'The Godfather'
+    assert results[2]['runtime'] == 175
+
+    assert results[3]['category'] == 'awards_won'
+    assert results[3]['title'] == 'The Dark Knight'
+    assert results[3]['awards_won'] == 153

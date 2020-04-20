@@ -125,8 +125,8 @@ def test_parsing_comparator_incorrect_data_to_parse(parsing_comparator):
     parsing_comparator.keyword = 'runtime'
     parsing_comparator.word_to_parse = 'min'
 
-    with pytest.raises(IndexError):
-        parsing_comparator.parse_function(wrong_db_result)
+    result = parsing_comparator.parse_function(wrong_db_result)
+    assert result['runtime'] is None
 
 
 def test_parsing_comparator_incorrect_type_data_to_parse(parsing_comparator):
@@ -138,5 +138,5 @@ def test_parsing_comparator_incorrect_type_data_to_parse(parsing_comparator):
     parsing_comparator.keyword = 'runtime'
     parsing_comparator.word_to_parse = 'min'
 
-    with pytest.raises(TypeError):
-        parsing_comparator.parse_function(wrong_db_result)
+    result = parsing_comparator.parse_function(wrong_db_result)
+    assert result['runtime'] is None

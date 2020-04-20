@@ -31,7 +31,11 @@ class DataCompare(DbReader, CommandHandler):
                 titles_to_compare = args[1:]  # Extract only titles
                 filtered_db_data = filter(lambda x: x['title'] in titles_to_compare,
                                           db_data)
-                result = comparator.compare_data(filtered_db_data)
+
+                try:
+                    result = comparator.compare_data(filtered_db_data)
+                except ValueError as error:
+                    raise error
 
                 return result
 
