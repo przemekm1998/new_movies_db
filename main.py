@@ -39,7 +39,7 @@ class Main:
                 for handler in handlers:
                     if key == handler.keyword:
                         parameters = commands[key] if type(commands[key]) is list \
-                            else list()
+                            else list()  # If command stores boolean pass empty list as parameters 
                         results = handler.handle(*parameters)
                         Main.print_results(results)
 
