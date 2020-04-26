@@ -1,6 +1,7 @@
 # Movies DB
 
 This script automatically updates the database if needed every time it runs, and allows you to perform certain actions
+
 Describe TODO: --add, --highscores --compare_by
 
 # Requirements
