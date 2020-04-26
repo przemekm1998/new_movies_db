@@ -37,11 +37,11 @@ Example output:
 | `--filter_by director [Director]` | Filtering movies by certain director, i.e. `--filter_by director "Roman Polanski"` |
 | `filter_by --language [Language]` | Filter movies in a certain language, i.e. `--filter_by language English` |
 | `filter_by --box_office [operator] [amount]` | Filter movies by box_office earnings, i.e. `--filter_by box_office gte 100000000`, gte - greater than, equals; gt - greater than; e - equals; lte - less than, equals; lt - less than |
-| `filter_by --awards oscars_nominated` | Filter movies which were nominated for Oscar, but didn't win |
-| `filter_by --awards awards_won_precentage [operator] [amount]` | Filter movies with certain awards won percentage, i.e. `--filter_by awards awards_won_percentage 80` |
+| `filter_by --oscars_nominated` | Filter movies which were nominated for Oscar, but didn't win |
+| `filter_by --awards_won_precentage [operator] [amount]` | Filter movies with certain awards won percentage, i.e. `--filter_by awards awards_won_percentage 80` |
 
 
-Example command: `python main.py --filter_by awards awards_won_percentage lte 20`
+Example command: `python main.py --filter_by awards_won_percentage lte 20`
 
 Example output:
 
