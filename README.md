@@ -49,3 +49,5 @@ Example output:
 | Batman Begins | Nominated for 1 Oscar. Another 14 wins & 72 nominations. |
 | Shutter Island | 11 wins & 65 nominations. |
 
+Commands working but still to be described: --add, --highscores --compare_by
+

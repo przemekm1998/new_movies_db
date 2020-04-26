@@ -30,11 +30,17 @@ class CLI:
         # Highscores
         parser.add_argument('--highscores', help='show highscores', action='store_true')
 
+        # Adding title to the database
+        parser.add_argument('--add', help='add title to the database', action='store',
+                            nargs='+', type=str,
+                            metavar=('title1', 'title2...'))
+
         args = parser.parse_args()
 
         commands = {'sort_by': args.sort_by,
                     'filter_by': args.filter_by,
                     'compare_by': args.compare_by,
-                    'highscores': args.highscores}
+                    'highscores': args.highscores,
+                    'add': args.add}
 
         return commands

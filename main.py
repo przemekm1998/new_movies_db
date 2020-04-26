@@ -1,4 +1,5 @@
 from modules.cli_interface import CLI
+from modules.commands.data_adder import AddData
 from modules.commands.data_compare import DataCompare
 from modules.commands.data_filter import DataFilter
 from modules.commands.data_highscores import DataHighscores
@@ -14,7 +15,8 @@ class Main:
         """ Main program function """
 
         # Available handlers of commands
-        handlers = (DataSorter(), DataFilter(), DataCompare(), DataHighscores())
+        handlers = (DataSorter(), DataFilter(), DataCompare(), DataHighscores(),
+                    AddData())
 
         # Database check
         updater = DatabaseUpdater()
@@ -49,7 +51,7 @@ class Main:
         :return:
         """
 
-        if type(results) is not list:
+        if type(results) is dict:
             print(results)
         else:
             for result in results:

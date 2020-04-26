@@ -36,10 +36,6 @@ class DbUpdater:
         try:
             with self.database.connection:
                 self.database.cursor.execute(self.update_statement, data)
-        except sqlite3.IntegrityError as error:
-            raise error
-        except sqlite3.OperationalError as error:
-            raise error
         except KeyError:
             raise KeyError(f'Data in incorrect format! {data}')
 
@@ -75,3 +71,35 @@ class DbReader:
                      for result in data)
 
         return dict_data
+
+
+class DbInsert:
+    """ Inserting data to the database """
+
+    def __init__(self, database=DbManager()):
+        self.database = database
+
+    @property
+    def insert_statement(self):
+        """ Restrict insert only for titles """
+
+        statement = f"""INSERT INTO {self.database.db_table_name} (title) VALUES 
+                    (:Title)"""
+
+        return statement
+
+    def insert_title_to_db(self, title):
+        """
+        Executing SQL statement to fetch data from db
+        :param title: Title to insert to the database
+        :return:
+        """
+
+        try:
+            with self.database.connection:
+                self.database.cursor.execute(self.insert_statement,
+                                             {'Title': title})
+        except sqlite3.IntegrityError:
+            raise sqlite3.IntegrityError(f'Value in the database already exists: {title}')
+
+        print(f'{title} added correctly to the database!')
