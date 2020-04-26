@@ -1,6 +1,7 @@
 # Movies DB
 
 This script automatically updates the database if needed every time it runs, and allows you to perform certain actions
+Describe TODO: --add, --highscores --compare_by
 
 # Requirements
 
@@ -48,6 +49,4 @@ Example output:
 | The Prestige | Nominated for 2 Oscars. Another 6 wins & 38 nominations. |
 | Batman Begins | Nominated for 1 Oscar. Another 14 wins & 72 nominations. |
 | Shutter Island | 11 wins & 65 nominations. |
-
-Commands working but still to be described: --add, --highscores --compare_by
 
